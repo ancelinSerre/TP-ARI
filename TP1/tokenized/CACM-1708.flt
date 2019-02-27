@@ -1,0 +1,1 @@
+note on the efficiency of lisp computation in paged machine the problem of the use of two levels of storage for programs is explored in the context of lisp system which uses core memory as buffer for large virtual memory stored on drum details of timing are given for one particular problem cacm august borrow murphy 

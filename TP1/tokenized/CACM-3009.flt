@@ -1,0 +1,1 @@
+insertions and deletions in one sided height balanced trees recently hirschberg has established that insertions into one sided height balanced trees can be done in log steps it is proved here that deletions can also be performed in log steps which answers the open problem posed by hirschberg cacm march kosaraju 

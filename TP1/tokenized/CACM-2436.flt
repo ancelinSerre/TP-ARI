@@ -1,0 +1,1 @@
+note on the confinement problem this note explores the problem of confining program during its execution so that it cannot transmit information to any other program except its caller set of examples attempts to stake out the boundaries of the problem necessary conditions for solution are stated and informally justified cacm october lampson 

@@ -1,0 +1,1 @@
+note on conditional expressions evaluation of conditional expression may succeed even when the deciding predicate diverges and the alternatives are records or nodes whose fields have different content cacm november friedman wise 
