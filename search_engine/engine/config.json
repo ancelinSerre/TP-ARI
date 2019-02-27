@@ -1,0 +1,7 @@
+{
+    "common_words"    : "../resources/cacm/common_words",
+    "tokenized_files" : "../resources/tokenized/",
+    "filtered_files"  : "../resources/stop_words_filtered/",
+    "result_files"    : "../resources/results/",
+    "generated_files" : "../resources/generated_files/"
+}

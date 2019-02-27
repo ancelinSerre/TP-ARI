@@ -1,3 +1,11 @@
+"""
+ +--------------------------------------------------------------+
+ | File    : zipf.py                                            |
+ | Authors : Baptiste Bouvier and Ancelin Serre                 |
+ | Year    : 2019                                               |
+ | Polytech Grenoble - INFO4 - Accès et Recherche d'information |
+ +--------------------------------------------------------------+
+"""
 import os
 import math
 import matplotlib.pyplot as plt
@@ -44,8 +52,6 @@ def zipf_plot(analysis):
     plt.xlabel("Rank")
     plt.ylabel("Frequency")
     axes = plt.gca()
-    # axes.set_xlim([0,len(analysis)]) 
-    # axes.set_ylim([0,analysis[0]["occurrences"]])
     axes.set_xlim([0,1000])
     axes.set_ylim([0,1000])
     ranks = [rank for rank in range(0,len(analysis))]
@@ -62,7 +68,7 @@ Entry point
 if __name__ == "__main__":
 
     # Folder where to store .flt files
-    folder_name = "C:\\Users\\Ancelin\\Documents\\Cours\\S8\\RechInf\\TP1\\tokenized\\"
+    folder_name = "../resources/tokenized/"
     occurrences = {}
     words = []
     total = 0

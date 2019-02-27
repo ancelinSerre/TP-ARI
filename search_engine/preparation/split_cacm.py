@@ -1,9 +1,10 @@
-inpfilename = "C:\\Users\\Ancelin\\Documents\\Cours\\S8\\RechInf\\TP1\\cacm\\cacm.all"
-outpathname = "C:\\Users\\Ancelin\\Documents\\Cours\\S8\\RechInf\\TP1\\results\\"
+inpfilename = "../resources/cacm/cacm.all"
+outpathname = "../resources/results/"
 
 def ExtractionDesFichiers(infile,outpath):
     fileHandler = open (infile, "r")
     debut = True
+    f = None
     while True:
         line = fileHandler.readline()
         if not line :
