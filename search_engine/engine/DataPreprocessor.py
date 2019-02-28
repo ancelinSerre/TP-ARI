@@ -33,6 +33,8 @@ class DataPreprocessor():
     Function used to initialize files dictionnary.
     """
     def _init_files(self):
+        # Making a new directory for filtered word
+        self.utils.safe_mkdir(self.utils.ft_path)
         # First we need to generate new documents with filtered words
         if not os.listdir(self.utils.ft_path):
             self._stop_list_filter()

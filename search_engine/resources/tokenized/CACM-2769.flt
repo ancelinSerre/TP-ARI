@@ -1,1 +1,0 @@
-modification of warshall algorithm for the transitive closure of binary relations an algorithm is given for computing the transitive closure of binary relation that is represented by boolean matrix the algorithm is similar to warshall although it executes faster for sparse matrices on most computers particularly in paging environment cacm april warren jr 

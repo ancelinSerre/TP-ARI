@@ -1,5 +1,21 @@
+import os
+
 inpfilename = "../resources/cacm/cacm.all"
 outpathname = "../resources/results/"
+
+"""
+Function used to make a directory, handling creation errors.
+:param:
+    name : (str) the directory name
+"""
+def safe_mkdir(name):
+    # Creating a directory where to save generated files
+    try:  
+        os.mkdir(name)
+    except OSError:  
+        print("[Warning] Creation of the directory " + name + " failed")
+    else:  
+        print("[Info] Successfully created the directory " + name )
 
 def ExtractionDesFichiers(infile,outpath):
     fileHandler = open (infile, "r")
@@ -33,4 +49,5 @@ def ExtractionDesFichiers(infile,outpath):
                     f.write(line[:-1]+"\n")
     fileHandler.close()
 
+safe_mkdir(outpathname)
 ExtractionDesFichiers(inpfilename,outpathname)

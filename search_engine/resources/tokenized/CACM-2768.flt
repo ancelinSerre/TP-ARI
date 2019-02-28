@@ -1,1 +1,0 @@
-an algorithm for locating adjacent storage blocks in the buddy system simple scheme for the determination of the location of block of storage relative to other blocks is described this scheme is applicable to the buddy type storage allocation systems cacm april hinds 

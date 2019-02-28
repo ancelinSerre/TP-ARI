@@ -68,18 +68,27 @@ class Utils:
             self._common_words = [word.replace("\n","").lower() for word in f.readlines()]  
 
     """
+    Function used to make a directory, handling creation errors.
+    :param:
+        name : (str) the directory name
+    """
+    def safe_mkdir(self, name):
+        # Creating a directory where to save generated files
+        try:  
+            os.mkdir(name)
+        except OSError:  
+            print("[Warning] Creation of the directory " + name + " failed")
+        else:  
+            print("[Info] Successfully created the directory " + name )
+
+    """
     Function used to save files in a newly
     generated directory named ./generated_files
     """
     def save(self, dp):
 
         # Creating a directory where to save generated files
-        try:  
-            os.mkdir(self.gf_path)
-        except OSError:  
-            print("Creation of the directory " + self.gf_path + " failed")
-        else:  
-            print("Successfully created the directory " + self.gf_path )
+        self.safe_mkdir(self.gf_path)
 
         # Removing redundant data before the save 
         # (tf is already visible in inverted index)
