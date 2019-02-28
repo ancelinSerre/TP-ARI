@@ -54,7 +54,7 @@ class DataPreprocessor():
     Function used to initialize the corpus vocabulary.
     """
     def init_vocabulary(self): 
-        print("[DP] Initiating corpus vocabulary...")
+        print("[DP] Initializing corpus vocabulary...")
         for document in self.files:
             for word in document["content"]:
                 if word not in self.vocab:
@@ -76,7 +76,7 @@ class DataPreprocessor():
     def init_salton(self):
         if not self.vocab:
             self.init_vocabulary()
-        print("[DP] Initiating Salton vector representation...")        
+        print("[DP] Initializing Salton vector representation...")        
         for current_file in self.files:
             document = {
                 "vector_tfidf" : {},
@@ -109,7 +109,7 @@ class DataPreprocessor():
     def init_inverted_index(self):
         if not self.salton_rep:
             self.init_salton()
-        print("[DP] Initiating Inverted index...")        
+        print("[DP] Initializing Inverted index...")        
         for term in self.vocab:
             word = {
                 "df" : self.vocab[term]["df"],
@@ -132,7 +132,7 @@ class DataPreprocessor():
     def init_norms(self):
         if not self.salton_rep:
             self.init_salton()
-        print("[DP] Initiating Norms list...")        
+        print("[DP] Initializing Norms list...")        
         for doc in self.salton_rep:
             sum_square_wi = 0
             vector_tfidf = self.salton_rep[doc]["vector_tfidf"]

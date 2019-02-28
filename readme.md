@@ -7,28 +7,31 @@
 ```bash
 .
 ├── readme.md
-└── search_engine
-    ├── engine
-    │   ├── config.json
-    │   ├── DataPreprocessor.py
-    │   ├── main.py
-    │   ├── Request.py
-    │   ├── Search.py
-    │   └── Utils.py
-    ├── preparation
-    │   ├── split_cacm.py
-    │   ├── tokenize_cacm.py
-    │   └── zipf.py
-    └── resources
-        ├── cacm
-        │   ├── cacm.all
-        │   ├── cite.info
-        │   ├── common_words
-        │   ├── qrels.text
-        │   ├── query.text
-        │   └── README
-        └── pictures
-            └── zipf.png
+├── requirements.txt
+├── search_engine
+│   ├── engine
+│   │   ├── config.json
+│   │   ├── DataPreprocessor.py
+│   │   ├── main.py
+│   │   ├── Request.py
+│   │   ├── Search.py
+│   │   └── Utils.py
+│   ├── preparation
+│   │   ├── split_cacm.py
+│   │   ├── tokenize_cacm.py
+│   │   └── zipf.py
+│   └── resources
+│       ├── cacm
+│       │   ├── cacm.all
+│       │   ├── cite.info
+│       │   ├── common_words
+│       │   ├── qrels.text
+│       │   ├── query.text
+│       │   └── README
+│       └── pictures
+│           └── zipf.png
+└── docs
+    └── report.md
 ```
 
 Dans le dossier `search_engine` on trouve les dossiers suivants :

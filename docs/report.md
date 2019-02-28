@@ -9,7 +9,7 @@
 -  <a href="#tp2">TP2 : Constitution de vocabulaire et représentation</a>
 -  <a href="#tp3">TP3 : Recherche et évaluation</a>
 
-## <span id="tp1">TP1 : Loi de Zipf</a> 
+## <span id="tp1">TP1 : Loi de Zipf</span> 
 Dans cette première étape, l'essentiel du travail consistait à préparer les fichiers `cacm` en un corpus "*tokenizé*" afin de pouvoir, par la suite, dresser une courbe représentant la fréquence d'apparation des termes du vocabulaire selon leur rang. Cela illustrait ainsi la fameuse [Loi de Zipf](https://hmul8r6b.imag.fr/lib/exe/fetch.php?media=accesinfoi-ii.pdf).
 <br>
 <br>
@@ -89,7 +89,7 @@ Dans ce code, on se préoccupe essentiellement de calculer le nombre d'occurrenc
 Ainsi, on créée un dictionnaire dans lequel pour chaque terme on sauvegarde sa probabilité d'apparition **pratique** (celle que l'on observe) et **théorique** (calculée selon le rang du terme et la valeur du lambda).\
 En représentant les deux courbes **pratiques** et **théoriques** via le package `matplotlib`, on observe aisément la précision donnée par la **Loi de Zipf**.
 
-## <span id="tp2">TP2 : Constitution de vocabulaire et représentation</a> 
+## <span id="tp2">TP2 : Constitution de vocabulaire et représentation</span> 
 
 ### Filtrage et racinisation des mots
 Dans cette seconde étape, on commence par appliquer un filtre sur les fichiers *tokenizé* (extenstion`.flt`) venant filtrer les mots communs répertoriés dans le répertoire `search_engine/resources/cacm/` sous le nom `common_words`. Cela est réalisé via le code suivant présent dans la classe `DataPreprocessor.py` :
@@ -309,5 +309,201 @@ On obtient finalement la structure suivante :
 	"CACM-1001.sttr": 57.66180788477066,
     ...
 ```
-## <span id="tp3">TP3 : Recherche et évaluation</a> 
-TODO
+## <span id="tp3">TP3 : Recherche et évaluation</span> 
+Dans cette dernière partie, on veut pouvoir lancer une recherche sur le corpus de document et observer les résultats de cette dernière. Pour arriver à cet objectif, nous avons suivi les étapes suivantes :
+- <a href="#tp31">Chargement en mémoire des différents fichiers nécessaires pour la recherche</a>
+- <a href="#tp32">Acquisition et prétraitement de la requête utilisateur</a>
+- <a href="#tp33">Traitement de la requête utilisateur et affichage des résultats</a>
+### <span id="tp31">Chargement en mémoire des différents fichiers nécessaires pour la recherche</span>
+
+Pour charger les données nécessaires, on réutilise tout simplement la classe `DataPreprocessor` dans notre fichier `main.py`
+```python
+if __name__ == "__main__":
+
+    # Reading user arguments
+    args = read_args()
+    # Instantiating a new Utils object 
+    utils = Utils(**load_config(args.config)) if args.config else Utils()    
+
+    dp = DataPreprocessor(utils)  # Instantiating a new DataPreprocessor
+    dp.init_vocabulary()          # Initializing the vocabulary
+    dp.init_salton()              # Initializing the salton vector representation
+    dp.init_inverted_index()      # Initializing the inverted index
+    dp.init_norms()               # Initializing norms list
+```
+### <span id="tp32">Acquisition et prétraitement de la requête utilisateur</span>
+Acquisition de la requête et du nombre de réponses attendues:
+```python
+"""
+Function used to get user input, his request and the
+number of results he wants
+:return:
+    request, (str) his request
+    nb_res, (int) number of results awaited
+"""
+def get_user_input():
+    # Getting user request
+    request = input("[SearchEngine] >> Enter your request : ")
+    if not request: exit(0)
+    # Getting number of request awaited
+    str_nb  = input("[SearchEngine] >> Enter the number of results you want : ")
+    nb_res  = 0 
+    # Casting it into an integer
+    if str_nb and str_nb.isdigit():
+        nb_res  = int(str_nb)
+    else: exit(0)
+
+    return (request, nb_res)
+```
+Instanciation d'une nouvelle requête dans la boucle infini de la fonction `main.py`:
+```python
+# Looping while request isn't empty
+while(True):
+    # Instantiating and preprocessing a new request
+    request = Request(request, dp.vocab, utils)
+```
+Le prétraitement de la requête se fait ainsi dans la classe `Request`. Dans cette dernière, on applique le même traitement que l'on appliqué aux documents, à savoir un filtrage et une racinisation ainsi qu'une mise en minuscule pour chacun des mots de la requête. De plus, on calcule la `TF` pour de chaque mot de la requête, leur **pondération** `TF.IDF` et la **norme** de la requête.
+Toutes ces fonctions sont présentes ci-dessous dans la classe `Request` :
+```python
+    @request.setter
+    def request(self, value):
+        # Lowering every word and splitting it on spaces
+        # in order to get a list
+        reqst = value.lower().split()
+        # Applying porter truncature for each word which are not in anti dictionary
+        reqst = [self.utils.get_root(req) for req in reqst if req not in self.utils.common_words]
+        self._request = reqst
+        
+    """
+    Used to initialize the vector of term frequency
+    """
+    def _init_vector_tf(self):
+        for word in self.request:
+            # Computing TF only consists in adding 1 
+            # to the TF of the word every time we meet it
+            self.vector_tf[word] = self.vector_tf.get(word, 0) + 1
+
+    """
+    Used to initialize the vector of TF.IDF weights
+    """
+    def _init_vector_tfidf(self):
+        for word in self.vector_tf:
+            # Verifying if the word exists in the vocabulary
+            word_vocab = self.vocabulary.get(word, None)
+            # Getting its Inverse Document Frequency
+            word_idf   = word_vocab["idf"] if word_vocab else 0
+            # Computing multiplication between TF and IDF
+            self.vector_tfidf[word] = self.vector_tf[word] * word_idf
+
+    """
+    Used to initialize the request norm
+    """
+    def _init_norm(self):
+        # Applying the following formula : sqrt(sum(wi**2))
+        self.norm = math.sqrt(sum([self.vector_tfidf[word]**2 for word in self.vector_tfidf]))
+
+```
+### <span id="tp33">Traitement de la requête utilisateur et affichage des résultats</span>
+Finalement, pour effectuer la recherche, on instancie un nouvel objet `Search` et on lance la recherche avec ce dernier après lui avoir donné les données nécessaires à savoir, la requête, le nombre de réponses attendues, l'index inversé, les normes des documents et une instance d'un objet `Utils` permettant de simplifier des traitements.
+```python
+    """
+    Function used to execute the search in the corpus. 
+    """
+    def search(self):
+        # Step 1 : Getting corresponding lines for each request term
+        cor_lines = self._get_corresponding_lines()
+        # Step 2 : Starting the search by computing cosinus for each document
+        self._compute_document_cosinus(cor_lines)
+        # Step 3 : Generating a list of results sorted on cosinus in desc order
+        self._init_final_results()
+        # Step 4 : Printing final results
+        print(self)
+        
+    """
+    Function used to get corresponding lines 
+    for each request term in the inverted index
+    :return:
+        corresponding_lines, (dict)
+    """
+    def _get_corresponding_lines(self):
+        # Getting corresponding lines for each request term
+        # in the inverted index
+        corresponding_lines = {}
+        for word in self.request.vector_tfidf:
+            if word in self.inverted_index:
+                corresponding_lines[word] = self.inverted_index[word]["docs"]
+        return corresponding_lines
+
+    """
+    Function used to compute document cosinus for each document
+    by using the following formula for a document :
+    cosinus_doc = sum(request_term_tfidf * document_term_tfidf) / request_norm * document_norm
+    """
+    def _compute_document_cosinus(self, corresponding_lines):
+        # Intermediate step to compute results
+        for word in corresponding_lines:
+            # Getting TF.IDF for current word in request
+            req_tfidf = self.request.vector_tfidf[word]
+            for doc in corresponding_lines[word]:
+                # Getting TF.IDF for current word in current document
+                doc_tfidf = corresponding_lines[word][doc]
+                # If we already saved a value for the current doc, 
+                # we simply add the new one to it
+                self.res[doc] = self.res.get(doc, 0) + (req_tfidf * doc_tfidf)
+
+        # Dividing each value in the intermediate results by 
+        # the multiplication of request norm and document norm
+        for doc in self.res:
+            self.res[doc] /= (self.request.norm * self.norms[doc])
+
+    """
+    Function used to initialize the list named final_results
+    which corresponds to the search results sorted on cosinus value in desc order
+    """
+    def _init_final_results(self):
+        # Placing final results in a list 
+        # in order to be able to sort it in desc order
+        self.final_result = []
+        for doc in self.res:
+            self.final_result.append({
+                "name" : doc,
+                "cosinus" : self.res[doc]
+            })
+
+        # Sorting final results on cosinus attribute in desc order
+        self.final_result = sorted(self.final_result, key=itemgetter("cosinus"), reverse=True) 
+
+```
+La fonction `search()` résume relativement bien étape par étape ce qui est fait dans cette classe lors de l'exécution d'une recherche. On cherche dans un premier temps à obtenir tous les documents dans lesquels chaque terme apparaissent. On calcule ensuite le cosinus pour chacun des documents trouvés. Enfin, on restructure les résultats sous la forme d'une liste de dictionnaire afin de pouvoir proposer un affichage cohérent (dans l'ordre décroissant).
+<br>
+Exemple de résultat :
+```
+[SearchEngine] >> Enter your request : sorting algorithms for large volumes
+[SearchEngine] >> Enter the number of results you want : 3
++--------------------------------------------+
+| 1489 results found...
++--------------------------------------------+
++--------------------------------------------+
+| 1 - [CACM-856] - [rel. ++] :
++--------------------------------------------+
+  Sorting with Large Volume, Random Access, Drum Storage
+  An approach to sorting records is described
+  using random access drum memory.  The Sort program
+  described is designed to be a generalized, self-generating
+  sort, applicable to a variety of record statements.
++--------------------------------------------+
+| 2 - [CACM-1724] - [rel. ++] :
++--------------------------------------------+
+  A Generalized Partial Pass Block Sort
+  The design of a partial pass block sort with
+  arbitrary range of key and number of work files
+  is described. The design is a generalization of the Partial
+  Pass Column Sort by Ashenhurst and the Amphisbaenic
++--------------------------------------------+
+| 3 - [CACM-866] - [rel. ++] :
++--------------------------------------------+
+  Sorting on Computers
+  CACM May, 1963
+  Gotlieb, C. C.
+```
+On peut aussi voir des `++` dans l'entête de chaque réponse. Cela correspond à une extension que nous avons réalisé qui indique la pertinence de la requête. `+` indique faiblement pertinent et `++++` fortement pertinent.
