@@ -27,14 +27,8 @@
         │   ├── qrels.text
         │   ├── query.text
         │   └── README
-        ├── generated_files
-        │   ├── inverted_index.json
-        │   ├── norms.json
-        │   ├── salton_representation.json
-        │   └── vocabulary.json
-        ├── results [3204 entries exceeds filelimit, not opening dir]
-        ├── stop_words_filtered [3204 entries exceeds filelimit, not opening dir]
-        └── tokenized [3204 entries exceeds filelimit, not opening dir]
+        └── pictures
+            └── zipf.png
 ```
 
 Dans le dossier `search_engine` on trouve les dossiers suivants :
@@ -44,5 +38,95 @@ Dans le dossier `search_engine` on trouve les dossiers suivants :
 
 ## Notice d'utilisation
 
-Pour faire fonctionner ce programme, il est nécessaire d'effectuer les étapes ci-dessous dans l'ordre indiqué : 
-- Placez-vous dans le dossier 
+Pour faire fonctionner ce programme, il est nécessaire de disposer de **Python 3** ou supérieur ainsi que d'effectuer les étapes ci-dessous dans l'ordre indiqué : 
+- Placez-vous dans le dossier `search_engine/preparation` :
+  ```bash
+  cd search_engine/preparation
+  ```
+- Lancez la commande suivante : 
+  ```bash
+  python split_cacm.py
+  ```
+  *Indications* : cette commande découpe le fichier `cacm.all` en **3204** fichiers dans un nouveau répertoire `search_engine/resources/results/`. 
+
+- Ensuite, il faut *"tokenizer"* chacun de ces fichiers via la commande suivante :
+  ```bash
+  python tokenize_cacm.py
+  ```
+  *Indications* : cette commande transforme chaque *terme* en minuscule et les listes sur une ligne avec un *espace* pour séparation. Cela nous permettra ensuite de faire des traitements sur ces fichiers simplement.
+
+- (Optionnel) Les fichiers étant maintenant préparés, vous pouvez observer une illustration de la [Loi de Zipf](https://hmul8r6b.imag.fr/lib/exe/fetch.php?media=accesinfoi-ii.pdf) en utilisant la commande suivante : 
+  ```bash
+  python zipf.py
+  ```
+  Vous obtiendrez normalement les résultats suivants : 
+  ```
+    +----------------------------------------------------------------------+
+    | Zipf's Law : λ = 18882
+    | Rank  Word            Occurrence(s)   Theoretical     Probability (%)
+    +----------------------------------------------------------------------+
+    |  1    the             11018           18882           6.2733
+    |  2    of              9031            9441            5.142
+    |  3    and             4536            6294            2.5827
+    |  4    to              3771            4720            2.1471
+    |  5    is              3727            3776            2.122
+    |  6    in              3446            3147            1.962
+    |  7    cacm            3204            2697            1.8243
+    |  8    for             3164            2360            1.8015
+    |  9    are             1988            2098            1.1319
+    |  10   algorithm               1544            1888            0.8791
+    +----------------------------------------------------------------------+
+    | Total number of word = 175633
+    +----------------------------------------------------------------------+
+  ```
+  Ainsi que le graphique suivant :
+  
+  ![zipf](search_engine/resources/pictures/zipf.png)
+
+- Maintenant que les fichiers sont préparés, on peut commencer à effectuer des requêtes. Il faut d'abord ce placer dans le répertoire `search_engine/engine/` : 
+  ```bash
+  cd search_engine/engine
+  ```
+
+- Il suffit désormais de lancer la commande suivante : 
+  ```bash
+  python main.py
+  ```
+  *Indications* : il existe plusieurs paramètres pour ce programme : 
+  * `--config [my_configfile.json]`, permet à l'utilisateur de chosir ses propres chemins vers lesquels peuvent être rangés les différents fichiers manipulés au cours du programme comme les mots filtrés, les mots tokenizé ou encore le répertoire de sortie pour ranger les fichiers `.json` générés.\
+  Cet argument est **OPTIONNEL**, le programme prévoit des chemins par défaut afin d'assurer un bon fonctionnement.\
+  Le fichier de configuration se présente comme suit : 
+  ```json
+  {
+    "common_words"    : "../resources/cacm/common_words",
+    "tokenized_files" : "../resources/tokenized/",
+    "filtered_files"  : "../resources/stop_words_filtered/",
+    "result_files"    : "../resources/results/",
+    "generated_files" : "../resources/generated_files/"
+  }
+  ```
+    
+  * `--save`, argument permettant d'indiquer si l'utilisateur souhaite sauvegarder les fichiers générés ou non.\
+  Par défaut les fichiers générés seront sauvegardé dans le répertoire `search_engine/resources/generated_files/` 
+
+  Une fois lancé, le programme va générer un certain nombre de fichiers ce qui devrait prendre aux alentours d'une minute. Une fois cela effectué, vous pourrez entrer la requête de votre choix ainsi qu'un nombre de réponses attendu puis le moteur de recherche se chargera du reste et cherchera sur le corpus des correspondances et les fichiers les plus pertinents vis à vis de la requête.
+
+  ```bash
+  # Exemple d'exécution :
+  python main.py --save
+
+  # Warning happens when the directory already exists
+  [Warning] Creation of the directory ../resources/stop_words_filtered/ failed
+  [DP] Initiating corpus vocabulary... 
+  [DP] OK
+  [DP] Initiating Salton vector representation...
+  [DP] OK
+  [DP] Initiating Inverted index...
+  [DP] OK
+  [DP] Initiating Norms list...
+  [DP] OK
+  [Warning] Creation of the directory ../resources/generated_files/ failed
+  [SearchEngine] >> Enter your request : my request
+  [SearchEngine] >> Enter the number of results you want : 5
+  ```
+  Pour quitter l'application, il suffit d'appuyer sur `Enter` lorsque le programme demande d'entrer une requête ou le nombre de réponses attendues.
