@@ -39,6 +39,10 @@ Dans le dossier `search_engine` on trouve les dossiers suivants :
 ## Notice d'utilisation
 
 Pour faire fonctionner ce programme, il est nécessaire de disposer de **Python 3** ou supérieur ainsi que d'effectuer les étapes ci-dessous dans l'ordre indiqué : 
+- A la racine du projet, installez les dépendances via la commande suivante :
+  ```bash
+  pip install -r requirements.txt
+  ```
 - Placez-vous dans le dossier `search_engine/preparation` :
   ```bash
   cd search_engine/preparation
