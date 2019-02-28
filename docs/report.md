@@ -43,14 +43,50 @@ for filename in os.listdir(folder_name):
 
     print("File " + filename + " tokenized")
 ```  
-On voit bien ici que pour chaque fichier `cacm`, on utilise la fonction `tokenize()` en provenance du package *Python* `nltk` permettant d'isoler chaque terme d'un fichier ligne après ligne. Une fois cette étape intermédiaire réalisée, on a juste à réécrire les données *tokenizées* en ajoutant pour chaque document tout ses mots sur une ligne, tous séparés par un `espace`. 
+On voit bien ici que pour chaque fichier `cacm`, on utilise la fonction `tokenize()` en provenance du package *Python* `nltk` permettant de *tokenizer* un document selon un certain modèle défini dans la variable `pattern` avec une **expression régulière** chargée d'isoler chaque **terme** (pas de nombres ou autres caractères spéciaux) d'un fichier ligne après ligne. \
+Une fois cette étape intermédiaire réalisée, on a juste à réécrire les données *tokenizées* en ajoutant pour chaque document tout ses mots sur une ligne, tous séparés par un `espace`. 
 <br>
 Ces fichiers seront finalement stockés dans le répertoire `search_engine/resources/tokenized/` avec l'extension `.flt`
 <br>
 <br>
-Ces étapes étant désormais réalisées, il nous est maintenant aisé de calculer le lambda de la Loi de Zipf et de dresser son graphique.
+Ces étapes étant désormais réalisées, il nous est maintenant aisé de calculer le lambda de la Loi de Zipf et de dresser son graphique. On trouve ainsi dans le script `zipf.py` : 
+```python
+# Folder where to store .flt files
+folder_name = "../resources/tokenized/"
+occurrences = {}
+words = []
+total = 0
+# Reading every file
+for filename in os.listdir(folder_name):
+    with open(folder_name+filename, "r") as f:
+        # Tokenizing each line of the file f
+        for line in f:
+            words += line.split()
 
-TODO
+# Counting occurences of each word
+for word in words:
+    occurrences[word] = occurrences.get(word, 0) + 1
+    total += 1
+
+# Let's construct the analysis data structure
+analysis = []
+for word in occurrences :
+    analysis.append({
+        "word" : word,
+        "occurrences" : occurrences[word],
+        "probability" : round((occurrences[word] / total) * 100, 4)
+    })
+
+# Sorting the values in desc order
+analysis     = sorted(analysis, key=itemgetter('probability'), reverse=True) 
+# Computing lambda value
+lambda_value = int(total / math.log(len(analysis)))
+# Adding theoretical occurrence for each word
+for i in range(0, len(analysis)):
+    analysis[i]["theoretical"] = int(lambda_value/(i+1))
+```
+Dans ce code, on se préoccupe essentiellement de calculer le nombre d'occurrences de chaque mot du corpus. Cela nous permet de calculer leur probabilité d'apparition et in fine de calculer la valeur du lambda. Ainsi, on créée un dictionnaire dans lequel pour chaque terme on sauvegarde sa probabilité d'apparition **pratique** (celle que l'on observe) et **théorique** (calculée selon le rang du terme et la valeur du lambda)
+
 ## <span id="tp2">TP2 : Constitution de vocabulaire et représentation</a> 
 TODO
 

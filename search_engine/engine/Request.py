@@ -68,10 +68,6 @@ class Request():
             # Computing TF only consists in adding 1 
             # to the TF of the word every time we meet it
             self.vector_tf[word] = self.vector_tf.get(word, 0) + 1
-            # if word not in self.vector_tf:
-            #     self.vector_tf[word] = 1
-            # else:
-            #     self.vector_tf[word] += 1
 
     """
     Used to initialize the vector of TF.IDF weights

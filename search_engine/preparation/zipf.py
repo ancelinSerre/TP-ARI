@@ -81,10 +81,7 @@ if __name__ == "__main__":
 
     # Counting occurences of each word
     for word in words:
-        if word in occurrences:
-            occurrences[word] += 1
-        else:
-            occurrences[word] = 1
+        occurrences[word] = occurrences.get(word, 0) + 1
         total += 1
 
 
