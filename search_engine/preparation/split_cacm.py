@@ -3,12 +3,12 @@ import os
 inpfilename = "../resources/cacm/cacm.all"
 outpathname = "../resources/results/"
 
-"""
-Function used to make a directory, handling creation errors.
-:param:
-    name : (str) the directory name
-"""
 def safe_mkdir(name):
+    """
+    Function used to make a directory, handling creation errors.
+    :param:
+        name : (str) the directory name
+    """
     # Creating a directory where to save generated files
     try:  
         os.mkdir(name)

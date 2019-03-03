@@ -20,14 +20,14 @@ from Request import Request
 from DataPreprocessor import DataPreprocessor
 from Search import Search
 
-"""
-Function used to get user input, his request and the
-number of results he wants
-:return:
-    request, (str) his request
-    nb_res, (int) number of results awaited
-"""
 def get_user_input():
+    """
+    Function used to get user input, his request and the
+    number of results he wants
+    :return:
+        request, (str) his request
+        nb_res, (int) number of results awaited
+    """
     # Getting user request
     request = input("[SearchEngine] >> Enter your request : ")
     if not request: exit(0)
@@ -41,30 +41,27 @@ def get_user_input():
 
     return (request, nb_res)
 
-"""
-Function used to read user arguments
-"""
 def read_args():
+    " Function used to read user arguments "
     # Read user arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", help="json config file describing paths to use")
     parser.add_argument("--save",   help="save vocabulary, inverted index, document norms and more in a results folder", action="store_true")
     return parser.parse_args()
 
-"""
-Load specified .json config file in
-a ready-to-use dictionnary
-:param: 
-    config_file : (str), config file name specified in args
-"""
 def load_config(config_file):
+    """
+    Load specified .json config file in
+    a ready-to-use dictionnary
+    :param: 
+        config_file : (str), config file name specified in args
+    """
     config = {}
     with open(args.config) as f:
         config = json.load(f)
     return config
 
 if __name__ == "__main__":
-
     # Reading user arguments
     args = read_args()
     # Instantiating a new Utils object 

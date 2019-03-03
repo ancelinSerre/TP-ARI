@@ -13,22 +13,21 @@ from operator import itemgetter
 # Project imports
 from Request import Request
 
-"""
-Search class used to do
-a research in a given corpus.
-"""
 class Search:
-
     """
-    Search constructor
-    :param:
-        request, (Request object) preprocessed request
-        nb_results, (int) number of results awaited by the user
-        inverted_index, (dict) inverted index coming from the DataPreprocessor Object
-        norms, (dict) documents norms coming from the DataPreprocessor Object
-        file_path, (str) default file location for results
+    Search class used to do
+    a research in a given corpus.
     """
     def __init__(self, request, nb_results, inverted_index, norms, utils):
+        """
+        Search constructor
+        :param:
+            request, (Request object) preprocessed request
+            nb_results, (int) number of results awaited by the user
+            inverted_index, (dict) inverted index coming from the DataPreprocessor Object
+            norms, (dict) documents norms coming from the DataPreprocessor Object
+            file_path, (str) default file location for results
+        """
         self.request        = request          # User request (Request object)
         self.nb_results     = nb_results       # Number of results awaited (int)
         self.inverted_index = inverted_index   # Inverted index (dict)
@@ -37,10 +36,8 @@ class Search:
         self.res            = {}               # Raw result (dict)
         self.final_result   = []               # Result list for pretty print (list)
 
-    """
-    Function used to represent Search object
-    """
     def __str__(self):
+        " Function used to represent Search object "
         display = ("+--------------------------------------------+\n"
                 + "| " +str(len(self.final_result)) + " results found...\n"
                 + "+--------------------------------------------+\n")
@@ -63,10 +60,8 @@ class Search:
             rank += 1
         return display
 
-    """
-    Function used to execute the search in the corpus. 
-    """
     def search(self):
+        " Function used to execute the search in the corpus. "
         # Step 1 : Getting corresponding lines for each request term
         cor_lines = self._get_corresponding_lines()
 
@@ -79,13 +74,13 @@ class Search:
         # Step 4 : Printing final results
         print(self)
         
-    """
-    Function used to get corresponding lines 
-    for each request term in the inverted index
-    :return:
-        corresponding_lines, (dict)
-    """
     def _get_corresponding_lines(self):
+        """
+        Function used to get corresponding lines 
+        for each request term in the inverted index
+        :return:
+            corresponding_lines, (dict)
+        """
         # Getting corresponding lines for each request term
         # in the inverted index
         corresponding_lines = {}
@@ -94,12 +89,12 @@ class Search:
                 corresponding_lines[word] = self.inverted_index[word]["docs"]
         return corresponding_lines
 
-    """
-    Function used to compute document cosinus for each document
-    by using the following formula for a document :
-    cosinus_doc = sum(request_term_tfidf * document_term_tfidf) / request_norm * document_norm
-    """
     def _compute_document_cosinus(self, corresponding_lines):
+        """
+        Function used to compute document cosinus for each document
+        by using the following formula for a document :
+        cosinus_doc = sum(request_term_tfidf * document_term_tfidf) / request_norm * document_norm
+        """
         # Intermediate step to compute results
         for word in corresponding_lines:
             # Getting TF.IDF for current word in request
@@ -116,11 +111,11 @@ class Search:
         for doc in self.res:
             self.res[doc] /= (self.request.norm * self.norms[doc])
 
-    """
-    Function used to initialize the list named final_results
-    which corresponds to the search results sorted on cosinus value in desc order
-    """
     def _init_final_results(self):
+        """
+        Function used to initialize the list named final_results
+        which corresponds to the search results sorted on cosinus value in desc order
+        """
         # Placing final results in a list 
         # in order to be able to sort it in desc order
         self.final_result = []
@@ -133,17 +128,17 @@ class Search:
         # Sorting final results on cosinus attribute in desc order
         self.final_result = sorted(self.final_result, key=itemgetter("cosinus"), reverse=True) 
 
-    """
-    Function used to estimate the relevance of a result
-    using the cosinus value of this result
-    :param:
-        cosinus, (float) cosinus value computed during search execution
-                it represents the relevance of a result between 0 and 1
-    :return:
-        relevance, (str) the result relevance represented as a string
-                containing +, ++, +++ or ++++ from worst to best    
-    """
     def _get_relevance(self, cosinus):
+        """
+        Function used to estimate the relevance of a result
+        using the cosinus value of this result
+        :param:
+            cosinus, (float) cosinus value computed during search execution
+                    it represents the relevance of a result between 0 and 1
+        :return:
+            relevance, (str) the result relevance represented as a string
+                    containing +, ++, +++ or ++++ from worst to best    
+        """
         relevance = "+"
         if 0.5 > cosinus >= 0.25:
             relevance = "++"

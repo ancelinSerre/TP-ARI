@@ -12,11 +12,10 @@ import json
 import copy
 import nltk.stem.porter as porter
 
-"""
-Class utils used to store paths used all along the program
-"""
 class Utils:
-
+    """
+    Class utils used to store paths used all along the program
+    """
     # Default value for common words file
     DEFAULT_CD = "../resources/cacm/common_words"
     # Default value for tokenized files directory
@@ -28,11 +27,11 @@ class Utils:
     # Default Generated files location
     DEFAULT_GF = "../resources/generated_files/"
 
-    """
-    Utils constructor
-    """
     def __init__(self, common_words=DEFAULT_CD, tokenized_files=DEFAULT_TD, 
         filtered_files=DEFAULT_FD, result_files=FILE_PATH, generated_files=DEFAULT_GF):
+        """
+        Utils constructor
+        """
         self.cw_path = common_words
         self.tk_path = tokenized_files
         self.ft_path = filtered_files
@@ -47,32 +46,32 @@ class Utils:
             self._init_common_words()
         return self._common_words
 
-    """
-    Function used to get a word's root
-    based on Porter truncature.
-    :param:
-        word (string) the word to truncate
-    :return:
-        string, the word's root.
-    """
     def get_root(self, word):
+        """
+        Function used to get a word's root
+        based on Porter truncature.
+        :param:
+            word (string) the word to truncate
+        :return:
+            string, the word's root.
+        """
         stemmer = porter.PorterStemmer()
         return stemmer.stem(word)
 
-    """
-    Function used to extract all common words
-    coming from the file located at self.cw_path
-    """
     def _init_common_words(self): 
+        """
+        Function used to extract all common words
+        coming from the file located at self.cw_path
+        """
         with open(self.cw_path, "r") as f:
             self._common_words = [word.replace("\n","").lower() for word in f.readlines()]  
 
-    """
-    Function used to make a directory, handling creation errors.
-    :param:
-        name : (str) the directory name
-    """
     def safe_mkdir(self, name):
+        """
+        Function used to make a directory, handling creation errors.
+        :param:
+            name : (str) the directory name
+        """
         # Creating a directory where to save generated files
         try:  
             os.mkdir(name)
@@ -81,12 +80,11 @@ class Utils:
         else:  
             print("[Info] Successfully created the directory " + name )
 
-    """
-    Function used to save files in a newly
-    generated directory named ./generated_files
-    """
     def save(self, dp):
-
+        """
+        Function used to save files in a newly
+        generated directory named ./generated_files
+        """
         # Creating a directory where to save generated files
         self.safe_mkdir(self.gf_path)
 

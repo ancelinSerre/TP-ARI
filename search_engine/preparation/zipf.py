@@ -11,15 +11,15 @@ import math
 import matplotlib.pyplot as plt
 from operator import itemgetter
 
-"""
-:param:
-    lambda_value, the lambda value (int)
-    analysis,     
-    a list of dictionnaries containing 
-    some values like the word, its occurrence, 
-    its theoretical occurrence and its probability
-"""
 def show_results(lambda_value, analysis):
+    """
+    :param:
+        lambda_value, the lambda value (int)
+        analysis,     
+        a list of dictionnaries containing 
+        some values like the word, its occurrence, 
+        its theoretical occurrence and its probability
+    """
     print("+----------------------------------------------------------------------+")
     print("| Zipf's Law : λ = " + str(lambda_value))
     print("| Rank\tWord\t\tOccurrence(s)\tTheoretical\tProbability (%)")
@@ -38,16 +38,15 @@ def show_results(lambda_value, analysis):
     print("| Total number of word = " + str(total))
     print("+----------------------------------------------------------------------+")
 
-
-"""
-:param: analysis, 
-    a list of dictionnaries containing 
-    some values like the word, its occurrence, 
-    its theoretical occurrence and its probability
-
-Plots the experimental and theoretical curves
-"""
 def zipf_plot(analysis):
+    """
+    :param: analysis, 
+        a list of dictionnaries containing 
+        some values like the word, its occurrence, 
+        its theoretical occurrence and its probability
+
+    Plots the experimental and theoretical curves
+    """
     # Plotting the result
     plt.xlabel("Rank")
     plt.ylabel("Frequency")
@@ -62,11 +61,10 @@ def zipf_plot(analysis):
     plt.legend(loc='upper right')
     plt.show()
 
-"""
-Entry point
-"""
 if __name__ == "__main__":
-
+    """
+    Entry point
+    """
     # Folder where to store .flt files
     folder_name = "../resources/tokenized/"
     occurrences = {}

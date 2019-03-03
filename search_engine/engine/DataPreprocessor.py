@@ -10,17 +10,14 @@
 import os
 import math
 
-"""
-Class DataPreprocessor used all along this file
-to generate a vocabulary, a salton vector representation and
-an inverted index from a given corpus.
-"""
 class DataPreprocessor():
-
     """
-    Constructor for class DataPreprocessor
+    Class DataPreprocessor used all along this file
+    to generate a vocabulary, a salton vector representation and
+    an inverted index from a given corpus.
     """
     def __init__(self, utils):
+        " Constructor for class DataPreprocessor "
         self.utils       = utils 
         self.files       = [] # List of files stored in memory
         self.vocab       = {} # Corpus vocabulary
@@ -29,10 +26,8 @@ class DataPreprocessor():
         self.norms       = {} # Document vector norms dict
         self._init_files()    # Initializing files first (it might take a long time)
 
-    """
-    Function used to initialize files dictionnary.
-    """
     def _init_files(self):
+        " Function used to initialize files dictionnary. "
         # Making a new directory for filtered word
         self.utils.safe_mkdir(self.utils.ft_path)
         # First we need to generate new documents with filtered words
@@ -50,10 +45,8 @@ class DataPreprocessor():
                         current_file["content"].append(word)
             self.files.append(current_file)
 
-    """
-    Function used to initialize the corpus vocabulary.
-    """
     def init_vocabulary(self): 
+        " Function used to initialize the corpus vocabulary. "
         print("[DP] Initializing corpus vocabulary...")
         for document in self.files:
             for word in document["content"]:
@@ -70,10 +63,8 @@ class DataPreprocessor():
         self._compute_idf()
         print("[DP] OK")
 
-    """
-    Function used to initialize salton representation using tf*idf.
-    """
     def init_salton(self):
+        " Function used to initialize salton representation using tf*idf. "
         if not self.vocab:
             self.init_vocabulary()
         print("[DP] Initializing Salton vector representation...")        
@@ -100,13 +91,14 @@ class DataPreprocessor():
         
         print("[DP] OK")
 
-    """
-    Function used to generate the inverted index
-    Inverted index represents each word present in the corpus
-    with its df and its tf for each file it is in.
-    It doesn't compute anything, it just collects and regroups data.
-    """
+    
     def init_inverted_index(self):
+        """
+        Function used to generate the inverted index
+        Inverted index represents each word present in the corpus
+        with its df and its tf for each file it is in.
+        It doesn't compute anything, it just collects and regroups data.
+        """
         if not self.salton_rep:
             self.init_salton()
         print("[DP] Initializing Inverted index...")        
@@ -123,13 +115,13 @@ class DataPreprocessor():
             self.inv_index[term] = word
         print("[DP] OK")        
 
-    """
-    Function used to compute vector norms of each document
-    of the corpus using the following formula :
-    ||vector|| = sqrt(sum(wi**2)) 
-    with wi = idf_i in our case.
-    """
     def init_norms(self):
+        """
+        Function used to compute vector norms of each document
+        of the corpus using the following formula :
+        ||vector|| = sqrt(sum(wi**2)) 
+        with wi = idf_i in our case.
+        """
         if not self.salton_rep:
             self.init_salton()
         print("[DP] Initializing Norms list...")        
@@ -142,11 +134,11 @@ class DataPreprocessor():
             self.norms[doc] = math.sqrt(sum_square_wi) 
         print("[DP] OK")        
 
-    """
-    Function used to remove stop words / common words
-    from each .flt tokenized files using a common words file.
-    """
     def _stop_list_filter(self):
+        """
+        Function used to remove stop words / common words
+        from each .flt tokenized files using a common words file.
+        """
         # Folder where to store .flt files
         # Reading every file
         for filename in os.listdir(self.utils.tk_path):
@@ -161,10 +153,8 @@ class DataPreprocessor():
                 for word in words:
                     f.write(word+" ")   
 
-    """
-    Function used to compute document frequency of each term in the vocabulary.
-    """
     def _compute_df(self):
+        " Function used to compute document frequency of each term in the vocabulary. "
         for current_file in self.files:
             encountered = []
             for word in current_file["content"]:
@@ -173,10 +163,8 @@ class DataPreprocessor():
                     self.vocab[word]["df"] += 1
                     encountered.append(word)
 
-    """
-    Function used to compute inverse document frequency of each term in the vocabulary.
-    """
     def _compute_idf(self):
+        " Function used to compute inverse document frequency of each term in the vocabulary. "
         N = len(self.files) # Number of document
         for term in self.vocab:
             self.vocab[term]["idf"] = math.log(N/self.vocab[term]["df"])
