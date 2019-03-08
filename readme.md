@@ -31,7 +31,8 @@
 │       └── pictures
 │           └── zipf.png
 └── docs
-    └── report.md
+    ├── report.md
+    └── report.pdf
 ```
 
 Dans le dossier `search_engine` on trouve les dossiers suivants :
